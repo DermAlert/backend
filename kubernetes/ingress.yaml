@@ -10,10 +10,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - dermalert.ai
+    - dermalert-backend.clusterlab.lappis.rocks
     secretName: tls-dermacam
   rules:
-  - host: dermalert.ai
+  - host: dermalert-backend.clusterlab.lappis.rocks
     http:
       paths:
         - pathType: Prefix
