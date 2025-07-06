@@ -80,3 +80,40 @@ async def upload_to_minio(file, folder_name, allowed_types=None, max_size_mb=50)
         raise e
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao fazer upload: {str(e)}")
+
+def upload_file_to_minio(file_path, object_name, content_type="application/octet-stream"):
+    """
+    Upload de arquivo local para MinIO (função síncrona).
+    
+    Args:
+        file_path (str): Caminho do arquivo local
+        object_name (str): Nome do objeto no MinIO
+        content_type (str): Tipo MIME do arquivo
+    
+    Returns:
+        str: Nome do objeto no MinIO ou None se houver erro
+    """
+    try:
+        minio_bucket = os.getenv("MINIO_BUCKET")
+        client = get_minio_client()
+        
+        # Verifica se o bucket existe, caso contrário cria
+        if not client.bucket_exists(minio_bucket):
+            client.make_bucket(minio_bucket)
+        
+        # Upload do arquivo
+        client.fput_object(
+            bucket_name=minio_bucket,
+            object_name=object_name,
+            file_path=file_path,
+            content_type=content_type
+        )
+        
+        return object_name
+        
+    except S3Error as e:
+        print(f"Erro no MinIO: {str(e)}")
+        return None
+    except Exception as e:
+        print(f"Erro ao fazer upload: {str(e)}")
+        return None
